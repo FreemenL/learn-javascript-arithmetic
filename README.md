@@ -1019,7 +1019,104 @@ function LinkedList(){
     }
 }
 ```
+#### ```线性探查```
+
+另一种解决冲突的方法是线性探查。当想向表中某个位置加入一个新元素的时候，如果索引 为index的位置已经被占据了，就尝试index+1的位置。如果index+1的位置也被占据了，就尝试 index+2的位置，以此类推。
+
+<img src="./imgs/line.png"/>
+
+代码
+
+```js
+function HashMap(){
+    let table = [];
+
+    var loseloseHashCode = function (key) {
+        let hash = "";
+        for(let i=0; i<key.length;i++){
+            hash += key.charCodeAt(i);
+        }
+        return hash%37;
+    }
+
+    var ValuePair = function(key, value){
+        this.key = key;
+        this.value = value;
+        this.toString = function(){
+            return "["+this.key+"-"+this.value+"]"
+        }
+    }
+
+    this.put = function(key,value){
+        let position = loseloseHashCode(key);
+        if(table[position]===undefined){
+            table[position] = new ValuePair(key,value);
+        }else{
+            let index = ++ position;
+            while(table[index]!==undefined){
+                index ++;
+            }
+            table[index] = new ValuePair(key,value);
+        }
+    }
+
+    this.get = function(key){
+        let position = loseloseHashCode(key);
+        if(table[position]){
+            if(table[position].key==key){
+                return table[position].value;
+            }else{
+                let index = ++position;
+
+                while(table[index]==undefined||table[index]['key']!==key){
+                    index++
+                }
+
+                if(table[index]['key']==key){
+                    return table[index].value;
+                }
+
+            }
+        }
+        return undefined
+    }
+
+    this.remove = function(key){
+        let position = loseloseHashCode(key);
+        if(table[position]){
+            if(table[position].key==key){
+                return table[position]=undefined;
+            }else{
+                let index = ++position;
+                while(table[index]==undefined||table[index]['key']!==key){
+                    index++;
+                }
+                if(table[index]['key']==key){
+                    return table[index] = undefined;
+                }
+
+            }
+        }
+        return false
+    }
+}
+
+```
+## ```创建更好的散列函数```
+
+我们实现的“lose lose”散列函数并不是一个表现良好的散列函数，因为它会产生太多的冲 突。如果我们使用这个函数的话，会产生各种各样的冲突。一个表现良好的散列函数是由几个方 面构成的:插入和检索元素的时间(即性能)，当然也包括较低的冲突可能性。我们可以在网上 找到一些不同的实现方法，或者也可以实现自己的散列函数。
 
 
+```js
+ var djb2HashCode = function (key) {
+        var hash = 5381; //{1}
+        for (var i = 0; i < key.length; i++) { //{2}
+            hash = hash * 33 + key.charCodeAt(i); //{3}
+        }
+        return hash % 1013; //{4}
+    };
 
+```
+它包括初始化一个hash变量并赋值为一个质数(行{1}——大多数实现都使用5381)，然后 迭代参数key(行{2})，将hash与33相乘(用来当作一个魔力数)，并和当前迭代到的字符的ASCII 码值相加(行{3})。
 
+最后，我们将使用相加的和与另一个随机质数(比我们认为的散列表的大小要大——在本例 中，我们认为散列表的大小为1000)相除的余数。
