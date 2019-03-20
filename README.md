@@ -1195,7 +1195,6 @@ function HashMap(){
     };
 
     function inOrderTraverseNode(node,callback){
-        debugger;
         if(node!==null){
             inOrderTraverseNode(node.left,callback);
             callback(node);
@@ -1237,10 +1236,339 @@ function HashMap(){
 <img src="./imgs/tree04.png"/>
 
 ### ```中序遍历的结果如下```
-
+1.先把left推进栈 2.执行自己 3.把right推进栈
 <img src="./imgs/tree07.png"/>
 ```所以输出 3 5 6 7 8 9 10 11 12 13 14 15 18 20 25```
 
 下面的图描绘了inOrderTraverse方法的访问路径:
 
 <img src="./imgs/tree06.png"/>
+
+### ```先序遍历```
+
+先序遍历是以优先于后代节点的顺序访问每个节点的。先序遍历的一种应用是打印一个结构化的文档。
+
+<img src="./imgs/tree08.png"/><br/>
+> 1.先执行自己 
+2.把left推进栈
+3.把right推进栈
+
+
+代码
+
+```js
+this.preOrderTraverse = function(callback){
+    preOrderTraverseNode(root, callback);
+};
+
+function preOrderTraverseNode(node,callback){
+    if(node!==null){
+        callback(node);
+        preOrderTraverseNode(node.left,callback);
+        preOrderTraverseNode(node.right,callback);
+    }
+}
+```
+下面是控制台上的输出结果(每个数字将会输出在不同的行):
+11 7 5 3 6 9 8 10 15 13 12 14 20 18 25  9
+### ```后序遍历```
+
+后序遍历则是先访问节点的后代节点，再访问节点本身。后序遍历的一种应用是计算一个目录和它的子目录中所有文件所占空间的大小。
+
+> 1.先把left推进栈
+2.把right推进栈 
+3.执行自己
+
+<img src="./imgs/tree09.png"/>
+
+```js
+this.postOrderTraverse = function(callback){
+        postOrderTraverseNode(root, callback);
+};
+var postOrderTraverseNode = function (node, callback) {
+    debugger;
+    if (node !== null) {
+        postOrderTraverseNode(node.left, callback);  
+        postOrderTraverseNode(node.right, callback); 
+        callback(node.key); 
+    } 
+}
+```
+
+下面是控制台的输出结果(每个数字将会输出在不同行):
+3 6 5 8 10 9 7 12 14 13 18 25 20 15 11
+
+
+### ```搜索最小值和最大值```
+根据BST的定义和下图可以看出 最小值是最左边的值 对大值是最右边的值
+<img src="./imgs/tree10.png"/>
+
+代码
+```js
+// 最小值
+this.min = function() {
+    return minNode(root); //{1}
+};
+var minNode = function (node) {
+        if (node){
+            while (node && node.left !== null) { //{2}
+             node = node.left;
+        return node.key;
+    }
+    return null;  //{4}
+};
+//最大值
+this.max = function() {
+        return maxNode(root);
+};
+var maxNode = function (node) {
+    if (node){
+        while (node && node.right !== null) { //{5}
+                node = node.right;
+        }
+        return node.key;
+    }
+    return null;
+};
+```
+
+### ```搜索一个特定的值```
+
+```js
+
+this.search = function(key){
+    return searchNode(root, key); 
+};
+
+var searchNode = function(node, key){
+    if (node === null){
+        return false;
+    }
+    if (key < node.key){ 
+        return searchNode(node.left, key); 
+    } else if (key > node.key){
+        return searchNode(node.right, key);
+    } else {
+        return true; 
+    }
+}
+
+```
+
+###  ```移除一个节点```
+
+第一种情况是该节点是一个没有左侧或右侧子节点的叶节点
+
+<img src="./imgs/tree11.png"/>
+
+第一种情况是移除有一个左侧或右侧子节点的节点
+<img src="./imgs/tree12.png"/>
+
+现在是第三种情况，也是最复杂的情况，那就是要移除的节点有两个子节点
+<img src="./imgs/tree13.png"/>
+
+### ```二叉搜索树 完整代码```
+BinarySearchTree
+|方法名|解释|
+|-|-|
+insert(key)|添加一个节点
+inOrderTraverse(callback)|中序遍历
+postOrderTraverse(callback)|后序遍历
+preOrderTraverse(callback)|先序遍历
+getTree|获取当前树对象
+min|获取最小值
+max|获取最大值
+search(key)|查找节点
+remove(key)|删除节点
+```js
+function BinarySearchTree(){
+
+        let that = this;
+
+        let Node = function(key){
+            this.key = key;
+            this.left = null;
+            this.right = null;
+        }
+
+        let root = null;
+        // 添加一个节点
+        this.insert = function(key){
+            let newNode = new Node(key);
+            if( root == null ){
+                root = newNode;
+            }else{
+                insertNode(root,newNode);
+            }
+        }
+        
+        function insertNode(node,newNode){
+            if( newNode.key < node.key ){
+                if(node.left===null){
+                    node.left = newNode;
+                }else{
+                    insertNode( node.left,newNode );
+                }
+            }else{
+                if( node.right === null ){
+                    node.right = newNode;
+                }else{
+                    insertNode( node.right,newNode );
+                }
+            }
+        }   
+        // 中序遍历
+        this.inOrderTraverse = function(callback){
+            inOrderTraverseNode(root, callback);
+        };
+
+        function inOrderTraverseNode(node,callback){
+            if(node!==null){
+                inOrderTraverseNode(node.left,callback);
+                callback(node);
+                inOrderTraverseNode(node.right,callback)
+            }
+        }
+            
+        this.getTree = function(){
+            return root;
+        }
+        //先序遍历
+        this.preOrderTraverse = function(callback){
+            preOrderTraverseNode(root, callback);
+        };
+
+        function preOrderTraverseNode(node,callback){
+            debugger;
+            if(node!==null){
+                callback(node);
+                preOrderTraverseNode(node.left,callback);
+                preOrderTraverseNode(node.right,callback);
+            }
+        }
+        // 后序遍历
+        this.postOrderTraverse = function(callback){
+                postOrderTraverseNode(root, callback);
+        };
+
+        var postOrderTraverseNode = function (node, callback) {
+            debugger;
+            if (node !== null) {
+                postOrderTraverseNode(node.left, callback);  
+                postOrderTraverseNode(node.right, callback); 
+                callback(node.key); 
+            } 
+        }
+        //最小值
+        this.min = function (){
+            return minNode(root); 
+        };
+        //最大值
+        this.max = function() {
+            return maxNode(root); 
+        };
+        
+        function findMinNode(node){
+            return that.search(minNode(node)); 
+        }
+
+        function minNode(node){
+            if(node){
+                while(node && node.left !== null){
+                    node = node.left
+                } 
+                return node.key;
+            }
+            return null;
+        }
+
+        function maxNode(node){
+            if(node){
+                while(node&&node.right){
+                    node = node.right;
+                }
+                return node.key;
+            }
+            return null;
+        }
+        // 查询节点
+        this.search = function(key){
+            return searchNode(root, key);
+        }
+
+        function searchNode(node,key){
+            if(node===null){
+                return false;
+            }
+            if(key<node.key){
+                return searchNode(node.left,key)
+            }else if(key>node.key){
+                return searchNode(node.right,key)
+            }else{
+                return node;
+            }
+        }
+        //删除
+        this.remove = function(key){
+            root = removeNode(root, key); 
+        };
+        var removeNode = function(node, key){
+            if (node === null){ 
+                return null;
+            }
+            if (key < node.key){ 
+                node.left = removeNode(node.left, key); 
+                return node; 
+            } else if (key > node.key){ 
+                node.right = removeNode(node.right, key); 
+                return node; 
+            } else { 
+                //键等于node.key
+                //第一种情况——一个叶节点
+                if (node.left === null && node.right === null){ 
+                    node = null; 
+                    return node; 
+                }
+                //第二种情况——一个只有一个子节点的节点 
+                if (node.left === null){ 
+                    node = node.right; 
+                    return node; 
+                } else if (node.right === null){ 
+                    return node; 
+                }
+                //第三种情况——一个有两个子节点的节点 7
+                debugger; 
+                var aux = findMinNode(node.right); 
+                node.key = aux.key; 
+                node.right = removeNode(node.right, aux.key); 
+                return node; 
+            }
+        };
+    }
+
+    var tree = new BinarySearchTree();
+    tree.insert(11);
+    tree.insert(7);
+    tree.insert(15);
+    tree.insert(5);
+    tree.insert(3);
+    tree.insert(9);
+    tree.insert(8);
+    tree.insert(10);
+    tree.insert(13);
+    tree.insert(12);
+    tree.insert(14);
+    tree.insert(20);
+    tree.insert(18);
+    tree.insert(25);
+    tree.insert(6);
+    
+    function printNode(node){
+        console.log(node)
+    }
+    //tree.inOrderTraverse(printNode);
+    //tree.preOrderTraverse(printNode);
+    // tree.postOrderTraverse(printNode);
+    console.log(tree.remove(15));
+    console.log(tree.getTree());
+```
