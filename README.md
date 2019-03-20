@@ -1117,6 +1117,130 @@ function HashMap(){
     };
 
 ```
+
 它包括初始化一个hash变量并赋值为一个质数(行{1}——大多数实现都使用5381)，然后 迭代参数key(行{2})，将hash与33相乘(用来当作一个魔力数)，并和当前迭代到的字符的ASCII 码值相加(行{3})。
 
-最后，我们将使用相加的和与另一个随机质数(比我们认为的散列表的大小要大——在本例 中，我们认为散列表的大小为1000)相除的余数。
+最后，我们将使用相加的和与另一个随机质数(比我们认为的散列表的大小要大——在本例中，我们认为散列表的大小为1000)相除的余数。
+
+# 树
+树是一种分层数据的抽象模型。现实生活中最常见的树的例子是家谱，或是公司的组织架构 图，如下图所示:
+
+<img src="./imgs/tree01.png"/>
+
+#### ```树的相关术语```
+<img src="./imgs/tree02.png"/>
+
+|术语|解释|
+|-|-|
+|根节点|位于树顶部的节点
+|节点  | 树中的每个节点 
+|内部节点| 至少有一个子节点 <br/>(7、5、9、15、13和20是内部 节点)
+|外部节点| 没有子元素的节点 <br/>(3、6、8、10、12、14、18和25是叶节点)
+|子树|子树由节点和它的后代构成<br/>例如，节点13、12和14构成了上 图中树的一棵子树。
+|深度|节点的深度取决于它的祖先节点的数量<br/>比如，节点3有3个祖先节 点(5、7和11)，它的深度为3。
+|高度|树的高度取决于所有节点深度的最大值。一棵树也可以被分解成层级。根节点在第0层，它 的子节点在第1层，以此类推。上图中的树的高度为3(最大高度已在图中表示——第3层)。
+
+### ```二叉树和二叉搜索树```
+
+二叉树中的节点最多只能有两个子节点:一个是左侧子节点，另一个是右侧子节点。这些定 义有助于我们写出更高效的向/从树中插入、查找和删除节点的算法。二叉树在计算机科学中的 应用非常广泛。
+二叉搜索树(BST)是二叉树的一种，但是它只允许你在左侧节点存储(比父节点)小的值， 在右侧节点存储(比父节点)大(或者等于)的值。上一节的图中就展现了一棵二叉搜索树
+
+##### 创建BinarySearchTree类
+下图展现了二叉搜索树数据结构的组织方式
+
+<img src="./imgs/tree03.png"/>
+和链表一样，将通过指针来表示节点之间的关系(术语称其为边)。在双向链表中，每个节 点包含两个指针，一个指向下一个节点，另一个指向上一个节点。对于树，使用同样的方式(也 使用两个指针)。但是，一个指向左侧子节点，另一个指向右侧子节点。因此，将声明一个Node 类来表示树中的每个节点(行{1})。值得注意的一个小细节是，不同于在之前的章节中将节点 本身称作节点或项，我们将会称其为键。键是树相关的术语中对节点的称呼。
+
+
+```代码实现```
+
+```js
+ function BinarySearchTree(){
+
+    let Node = function(key){
+        this.key = key;
+        this.left = null;
+        this.right = null;
+    }
+
+    let root = null;
+
+    this.insert = function(key){
+        let newNode = new Node(key);
+        if( root == null ){
+            root = newNode;
+        }else{
+            insertNode(root,newNode);
+        }
+    }
+    //添加节点
+    function insertNode(node,newNode){
+        if( newNode.key < node.key ){
+            if(node.left===null){
+                node.left = newNode;
+            }else{
+                insertNode( node.left,newNode );
+            }
+        }else{
+            if( node.right === null ){
+                node.right = newNode;
+            }else{
+                insertNode( node.right,newNode );
+            }
+        }
+    }   
+    //中序遍历
+    this.inOrderTraverse = function(callback){
+        inOrderTraverseNode(root, callback); //{1}
+    };
+
+    function inOrderTraverseNode(node,callback){
+        debugger;
+        if(node!==null){
+            inOrderTraverseNode(node.left,callback);
+            callback(node);
+            inOrderTraverseNode(node.right,callback)
+        }
+    }
+    
+    this.getTree = function(){
+        return root;
+    }
+
+    }
+
+    var tree = new BinarySearchTree();
+    tree.insert(11);
+    tree.insert(7);
+    tree.insert(15);
+    tree.insert(5);
+    tree.insert(3);
+    tree.insert(9);
+    tree.insert(8);
+    tree.insert(10);
+    tree.insert(13);
+    tree.insert(12);
+    tree.insert(14);
+    tree.insert(20);
+    tree.insert(18);
+    tree.insert(25);
+    tree.insert(6);
+    
+    function printNode(node){
+        console.log(node)
+    }
+    tree.inOrderTraverse(printNode);
+```
+
+以上代码构建的二叉搜索树如下
+
+<img src="./imgs/tree04.png"/>
+
+### ```中序遍历的结果如下```
+
+<img src="./imgs/tree07.png"/>
+```所以输出 3 5 6 7 8 9 10 11 12 13 14 15 18 20 25```
+
+下面的图描绘了inOrderTraverse方法的访问路径:
+
+<img src="./imgs/tree06.png"/>
