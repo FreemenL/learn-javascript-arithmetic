@@ -1369,7 +1369,7 @@ var searchNode = function(node, key){
 
 ### ```二叉搜索树 完整代码```
 BinarySearchTree
-|方法名|解释|
+|方法名|解释|
 |-|-|
 insert(key)|添加一个节点
 inOrderTraverse(callback)|中序遍历
@@ -1611,6 +1611,7 @@ function BinarySearchTree(){
 
 下面代码实现我们的图
 我们的Graph它包括
+
 |方法名|解释|
 |-|-|
 addVertex| 向图中添加一个新的顶点
