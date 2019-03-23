@@ -1369,7 +1369,7 @@ var searchNode = function(node, key){
 
 ### ```二叉搜索树 完整代码```
 BinarySearchTree
-|方法名|解释|
+|方法名|解释|
 |-|-|
 insert(key)|添加一个节点
 inOrderTraverse(callback)|中序遍历
@@ -1891,6 +1891,7 @@ dfs|深搜
     }
     // 最终的s就是从起始点到其他顶点的最短路径
 ```
+
 ## 算法
 ##### 排序算法
 * 冒泡排序：拿当前值跟后面的值挨个比较 如果当前值比后面的值大 就替换位置
